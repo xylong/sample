@@ -10,15 +10,17 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
+     * @param  string|null $guard
      * @return mixed
      */
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+            $message = $request->is('signup') ? '您已登陆，无需再次操作' : '您已注册并已登录！';
+            session()->flash('info', $message);
+            return redirect('/');
         }
 
         return $next($request);
